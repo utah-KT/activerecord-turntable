@@ -192,7 +192,7 @@ module ActiveRecord::Turntable
         tree.values = [[SQLTree::Node::Expression::Variable.new("\\0")]]
         sql = tree.to_sql
         value_sql = vs.map do |val|
-          "(#{val.map { |v| @proxy.connection.quote(v.value)}.join(', ')})"
+          "(#{val.map { |v| "#{v.escape}#{@proxy.connection.quote(v.value)}" }.join(', ')})"
         end.join(', ')
         sql.gsub!('("\0")') { value_sql }
         shards_with_query[@proxy.cluster.select_shard(k)] = sql
